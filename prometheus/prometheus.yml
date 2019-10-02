@@ -1,0 +1,53 @@
+global:
+  evaluation_interval: 15s
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  external_labels:
+    environment: 127.0.0.1
+
+remote_write:
+  - url: http://127.0.0.1:8086/api/v1/prom/write?db=prometheus
+
+remote_read:
+  - url: http://127.0.0.1:8086/api/v1/prom/read?db=prometheus
+
+rule_files:
+  - /etc/prometheus/rules/snmp_managed.rules
+
+scrape_configs:
+  - job_name: prometheus
+    metrics_path: /metrics
+    static_configs:
+    - targets:
+      - 127.0.0.1:9090
+
+  - job_name: node
+    file_sd_configs:
+    - files:
+      - /etc/prometheus/file_sd/node.yml
+      - /etc/prometheus/file_sd/snmp.yml
+
+  - job_name: snmp
+    scrape_interval: 150s
+    scrape_timeout: 30s
+    file_sd_configs:
+      - files:
+        - '/etc/prometheus/conf.d/snmp/snmp_juniper.json'
+    metrics_path: /snmp
+    params:
+      module:
+      - if_mib
+      community:
+      - public
+    relabel_configs:
+    - source_labels:
+      - __address__
+      target_label: __param_target
+    - source_labels:
+      - __param_target
+      target_label: instance
+    - replacement: 127.0.0.1:9116
+      target_label: __address__
+    - source_labels:
+      - mib
+      target_label: __param_module

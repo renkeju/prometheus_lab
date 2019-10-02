@@ -1,0 +1,59 @@
+version: "3.7"
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.12.0
+    hostname: prometheus
+    volumes:
+      - "${PWD}/prometheus/conf.d/:/etc/prometheus/conf.d/"
+      - "${PWD}/prometheus/rules/:/etc/prometheus/rules/"
+      - "${PWD}/prometheus/file_sd/:/etc/prometheus/file_sd/"
+      - "${PWD}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+    links:
+      - snmp_exporter
+      - node_exporter
+      - influxdb
+    ports:
+      - 9090:9090
+
+  snmp_exporter:
+    image: carlosedp/snmp_exporter:latest
+    hostname: snmp_exporter
+    volumes:
+      - "${PWD}/snmp_exporter/snmp.yml:/etc/snmp_exporter/snmp.yml"
+    ports:
+      - 9116:9116
+
+  node_exporter:
+    image: prom/node_exporter:v0.18.1
+    hostname: node_exporter
+  
+  grafana:
+    image: grafana/grafana:6.3.6
+    hostname: grafana
+    volumes:
+      - grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD="secret"
+    links:
+      - prometheus
+    ports:
+      - 3000:3000
+
+  influxdb:
+    image: influxdb:1.7.8
+    hostname: influxdb
+    volumes:
+      - influxdb:/var/lib/influxdb
+    environment:
+      - INFLUXDB_REPORTING_DISABLED=true
+      - INFLUXDB_ADMIN_ENABLED=true
+      - INFLUXDB_DB="prometheus"
+      - INFLUXDB_ADMIN_USER="admin"
+      - INFLUXDB_ADMIN_PASSWORD="supersecretpassword"
+      - INFLUXDB_USER="pron"
+      - INFLUXDB_USER_PASSWORD="secretpassword"
+
+volumes:
+  influxdb:
+  grafana:

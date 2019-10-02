@@ -1,0 +1,39 @@
+groups:
+- name: snmp managed alert rules
+  rules:
+  - alert: ErrorPackages
+    annotations:
+      description: 'Device: {{ $labels.hostname }}
+        Interface: {{ $labels.ifName }}
+        IndexNumber: {{ $labels.ifIndex }}
+        Alias: {{ $labels.ifAlias }}
+        has been Error Packages for more than 10 minutes'
+      summary: Error Packages {{ $labels.hostname }} {{ $labels.ifName }} {{ $labels.ifAlias }}
+    expr: changes(ifInErrors[10m]) > 0 or changes(ifOutErrors[10m]) > 0
+    for: 10m
+    labels:
+      severity: warning
+  - alert: HighInputBandwidth
+    annotations:
+      description: 'Device: {{ $labels.hostname }}
+        Interface: {{ $labels.ifName }}
+        IndexNumber: {{ $labels.ifIndex }}
+        Alias: {{ $labels.ifAlias }}
+        has been Input bandwidth takes up more than 80% for more than 5 minutes'
+      summary: High Input Bandwidth {{ $labels.hostname }} {{ $labels.ifName }} {{ $labels.ifAlias }}
+    expr: (irate(ifHCInOctets[5m])*8 !=0 or irate(ifInOctets[5m])*8 !=0) / (ifHighSpeed*1024^2 != 0 or ifSpeed != 0) > 0.8
+    for: 5m
+    labels:
+      severity: warning
+  - alert: HighOutputBandwidth
+    annotations:
+      description: 'Device: {{ $labels.hostname }}
+        Interface: {{ $labels.ifName }}
+        IndexNumber: {{ $labels.ifIndex }}
+        Alias: {{ $labels.ifAlias }}
+        has been Output bandwidth takes up more than 80% for more than 5 minutes'
+      summary: High Output Bandwidth {{ $labels.hostname }} {{ $labels.ifName }} {{ $labels.ifAlias }}
+    expr: (irate(ifHCOutOctets[5m])*8 !=0 or irate(ifOutOctets[5m])*8 !=0) / (ifHighSpeed*1024^2 != 0 or ifSpeed != 0) > 0.8
+    for: 5m
+    labels:
+      severity: warning
