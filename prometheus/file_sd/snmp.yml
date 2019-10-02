@@ -1,13 +1,12 @@
 [
   {
       "labels": {
-          "mib": "if_mib",
+          "mib": "apcups",
           "architecture": "x86_64",
-          "hostname": "lab.prometheus.local",
           "model": "linux"
       },
       "targets": [
-          "127.0.0.1"
+          "snmpd"
       ]
   }
 ]
