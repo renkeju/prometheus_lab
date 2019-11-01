@@ -6,10 +6,10 @@ global:
     environment: 127.0.0.1
 
 remote_write:
-  - url: http://influxdb:8086/api/v1/prom/write?db=prometheus
+  - url: http://influxdb:8086/api/v1/prom/write?db=prometheus&u=prom&p=secretpassword
 
 remote_read:
-  - url: http://influxdb:8086/api/v1/prom/read?db=prometheus
+  - url: http://influxdb:8086/api/v1/prom/read?db=prometheus&u=prom&p=secretpassword
 
 rule_files:
   - /etc/prometheus/rules/snmp.rules
