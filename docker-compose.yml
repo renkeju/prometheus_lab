@@ -36,6 +36,10 @@ services:
     hostname: grafana
     volumes:
       - grafana:/var/lib/grafana
+      - "${PWD}/vmware_exporter/dashboards/cluster.json:/usr/share/grafana/public/dashboards/cluster.json"
+      - "${PWD}/vmware_exporter/dashboards/esx.json:/usr/share/grafana/public/dashboards/esx.json"
+      - "${PWD}/vmware_exporter/dashboards/esxi.json:/usr/share/grafana/public/dashboards/esxi.json"
+      - "${PWD}/vmware_exporter/dashboards/virtualmachine.json:/usr/share/grafana/public/dashboards/virtualmachine.json"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=secret
     links:
