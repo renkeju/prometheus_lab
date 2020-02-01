@@ -1,0 +1,25 @@
+default:
+    vsphere_host: 192.168.0.204
+    vsphere_user: 'root'
+    vsphere_password: '123456.com'
+    ignore_ssl: True
+    specs_size: 5000
+    collect_only:
+        vms: True
+        vmguests: True
+        datastores: True
+        hosts: True
+        snapshots: True
+
+esx:
+    vsphere_host: 192.168.0.204
+    vsphere_user: 'root'
+    vsphere_password: '123456.com'
+    ignore_ssl: True
+    specs_size: 5000
+    collect_only:
+        vms: True
+        vmguests: True
+        datastores: True
+        hosts: True
+        snapshots: True

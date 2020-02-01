@@ -10,30 +10,27 @@ services:
       - "${PWD}/prometheus/file_sd/:/etc/prometheus/file_sd/"
       - "${PWD}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
     links:
-      - snmp_exporter
       - node_exporter
+      - vmware_exporter
       - influxdb
     ports:
       - 9090:9090
 
-  snmp_exporter:
-    image: carlosedp/snmp_exporter:latest
-    hostname: snmp_exporter
-    volumes:
-      - "${PWD}/snmp_exporter/snmp.yml:/etc/snmp_exporter/snmp.yml"
-    ports:
-      - 9116:9116
-    links:
-      - snmpd
-
-  snmpd:
-    image: polinux/snmpd:alpine
-    hostname: snmpd
-
   node_exporter:
-    image: carlosedp/node_exporter:latest
+    image: prom/node-exporter:latest
     hostname: node_exporter
-  
+
+  vmware_exporter:
+    image: pryorda/vmware_exporter:v0.11.0
+    entrypoint:
+      - /usr/local/bin/vmware_exporter
+      - -c
+      - /opt/vmware_exporter/config.yml
+    ports:
+      - 9272:9272
+    volumes:
+      - "${PWD}/vmware_exporter/config.yml:/opt/vmware_exporter/config.yml"
+
   grafana:
     image: grafana/grafana:6.3.6
     hostname: grafana
